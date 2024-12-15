@@ -56,24 +56,23 @@ async def get_service_secret(service_name: str, x_api_key: str = Header(...)):
         raise HTTPException(status_code=404, detail="Service not found")
     # Return the service secret and invalidation status
     service_info = service_secrets_db[service_name]
-    return {
-        "service_secret": service_info["secret"],
-        "valid": service_info["valid"]
-    }
+    return {"service_secret": service_info["secret"], "valid": service_info["valid"]}
+
 
 @app.put("/invalidate-service-secret/{service_name}")
 async def invalidate_service_secret(service_name: str, x_api_key: str = Header(...)):
     # Check if the provided API key matches the secret key
     if x_api_key != ADMIN_SECRET_KEY:
         raise HTTPException(status_code=403, detail="Invalid AdminAPI Key")
-    
+
     # Check if the service name exists in the service secrets database
     if service_name not in service_secrets_db:
         raise HTTPException(status_code=404, detail="Service not found")
-    
+
     # Invalidate the service secret by setting the invalidated flag to True
     service_secrets_db[service_name]["valid"] = False
     return {"message": f"Service secret for {service_name} invalidated successfully"}
+
 
 # Health check endpoint
 @app.get("/health")
