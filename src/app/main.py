@@ -51,3 +51,9 @@ async def get_service_secret(service_name: str, x_api_key: str = Header(...)):
     if service_name not in service_secrets_db:
         raise HTTPException(status_code=404, detail="Service not found")
     return {"service_secret": service_secrets_db[service_name]}
+
+
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}

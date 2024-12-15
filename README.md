@@ -8,6 +8,7 @@ The project is based on FastAPI and is deployed on a server.
 ## Activate Virtual Environment
 
 ```
+python3 -m venv .venv
 source .venv/bin/activate
 which python
 ```
@@ -17,14 +18,34 @@ which python
 To run the application in development mode, you can use:
 
 ```
-fastapi dev main.py
+pip install -r requirements.txt
 ```
+
+```
+fastapi dev main.py
+# run in background
+nohup fastapi dev main.py &
+```
+
+check the log
+```
+tail -f nohup.out
+```
+
+kill the process
+```
+ps aux | grep 'uvicorn src.app.main:app'
+kill -9 <pid> # kill the process
+```
+
 The fastapi dev main.py command is a feature introduced in recent FastAPI, providing a convenient way to run your FastAPI application in development mode. This command is part of the FastAPI CLI, which simplifies the process of starting a development server.
 
 Or
 
 ```
 uvicorn main:app --reload
+# run in background and serve externally
+nohup uvicorn main:app --host 0.0.0.0 --port 8000 --reload &
 ```
 
 uvicorn main:app --reload
