@@ -1,8 +1,8 @@
-# Scenic Server Python Project Setup
+# Scenic Road Server Python Project Setup
 
 ## Overview
 
-The project is based on FastAPI and is deployed on a server.
+The project is the backend server for the Scenic Road mobile app. It is built with FastAPI and is deployed on AWS.
 
 
 ## Activate Virtual Environment
@@ -21,10 +21,29 @@ To run the application in development mode, you can use:
 pip install -r requirements.txt
 ```
 
+Regular development mode
 ```
 fastapi dev main.py
-# run in background
-nohup fastapi dev main.py &
+```
+or dev mode serve externally
+```
+fastapi dev main.py --host 0.0.0.0 --port 8000
+```
+
+Production mode
+Run a FastAPI app in production mode. 🚀              │
+```
+fastapi run main.py
+```
+
+The fastapi dev main.py command is a feature introduced in recent FastAPI, providing a convenient way to run your FastAPI application in development mode. This command is part of the FastAPI CLI, which simplifies the process of starting a development server.
+
+Or, also dev mode
+```
+uvicorn main:app --reload
+
+# run in background and serve externally
+nohup uvicorn main:app --host 0.0.0.0 --port 8000 --reload &
 ```
 
 check the log
@@ -34,19 +53,13 @@ tail -f nohup.out
 
 kill the process
 ```
-ps aux | grep 'uvicorn src.app.main:app'
+lsof -i :8000
+ps aux | grep 'fastapi' # it restarts the server automatically
 kill -9 <pid> # kill the process
+ps aux | grep 'uvicorn src.app.main:app'
+ps aux | grep 'python' 
 ```
 
-The fastapi dev main.py command is a feature introduced in recent FastAPI, providing a convenient way to run your FastAPI application in development mode. This command is part of the FastAPI CLI, which simplifies the process of starting a development server.
-
-Or
-
-```
-uvicorn main:app --reload
-# run in background and serve externally
-nohup uvicorn main:app --host 0.0.0.0 --port 8000 --reload &
-```
 
 uvicorn main:app --reload
 Start a FastAPI application using the Uvicorn server.

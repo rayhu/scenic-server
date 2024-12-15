@@ -46,7 +46,7 @@ async def validate_api_key(x_api_key: str = Header(...)):
 
 @app.get("/get-service-secret/{service_name}")
 async def get_service_secret(service_name: str, x_api_key: str = Header(...)):
-    if x_api_key is not SECRET_KEY:
+    if x_api_key != SECRET_KEY:
         raise HTTPException(status_code=403, detail="Invalid API Key")
     if service_name not in service_secrets_db:
         raise HTTPException(status_code=404, detail="Service not found")
