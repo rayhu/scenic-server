@@ -4,6 +4,7 @@ import secrets
 from dotenv import load_dotenv
 import os
 from src.config.settings import settings
+from typing import Dict
 
 # Load environment variables from .env file
 load_dotenv()
@@ -12,10 +13,11 @@ app = FastAPI(title=settings.APP_NAME, debug=settings.DEBUG)
 
 # Retrieve secrets from environment variables
 SECRET_KEY = os.getenv("SECRET_KEY")
-service_secrets_db = {
-    "openai": os.getenv("OPENAI_SECRET_KEY"),
-    "anthropic": os.getenv("ANTHROPIC_SECRET_KEY"),
-    "google": os.getenv("GOOGLE_SECRET_KEY"),
+ADMIN_SECRET_KEY = os.getenv("ADMIN_SECRET_KEY")
+service_secrets_db: Dict[str, Dict[str, bool]] = {
+    "openai": {"secret": os.getenv("OPENAI_SECRET_KEY"), "valid": True},
+    "anthropic": {"secret": os.getenv("ANTHROPIC_SECRET_KEY"), "valid": True},
+    "google": {"secret": os.getenv("GOOGLE_SECRET_KEY"), "valid": True},
 }
 
 print("Scenic Server is listening")
@@ -46,12 +48,32 @@ async def validate_api_key(x_api_key: str = Header(...)):
 
 @app.get("/get-service-secret/{service_name}")
 async def get_service_secret(service_name: str, x_api_key: str = Header(...)):
+    # Check if the provided API key matches the secret key
     if x_api_key != SECRET_KEY:
         raise HTTPException(status_code=403, detail="Invalid API Key")
+    # Check if the service name exists in the service secrets database
     if service_name not in service_secrets_db:
         raise HTTPException(status_code=404, detail="Service not found")
-    return {"service_secret": service_secrets_db[service_name]}
+    # Return the service secret and invalidation status
+    service_info = service_secrets_db[service_name]
+    return {
+        "service_secret": service_info["secret"],
+        "valid": service_info["valid"]
+    }
 
+@app.put("/invalidate-service-secret/{service_name}")
+async def invalidate_service_secret(service_name: str, x_api_key: str = Header(...)):
+    # Check if the provided API key matches the secret key
+    if x_api_key != ADMIN_SECRET_KEY:
+        raise HTTPException(status_code=403, detail="Invalid AdminAPI Key")
+    
+    # Check if the service name exists in the service secrets database
+    if service_name not in service_secrets_db:
+        raise HTTPException(status_code=404, detail="Service not found")
+    
+    # Invalidate the service secret by setting the invalidated flag to True
+    service_secrets_db[service_name]["valid"] = False
+    return {"message": f"Service secret for {service_name} invalidated successfully"}
 
 # Health check endpoint
 @app.get("/health")
