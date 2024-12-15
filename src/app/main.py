@@ -15,9 +15,9 @@ app = FastAPI(title=settings.APP_NAME, debug=settings.DEBUG)
 SECRET_KEY = os.getenv("SECRET_KEY")
 ADMIN_SECRET_KEY = os.getenv("ADMIN_SECRET_KEY")
 service_secrets_db: Dict[str, Dict[str, bool]] = {
-    "openai": {"secret": os.getenv("OPENAI_SECRET_KEY"), "valid": True},
-    "anthropic": {"secret": os.getenv("ANTHROPIC_SECRET_KEY"), "valid": True},
-    "google": {"secret": os.getenv("GOOGLE_SECRET_KEY"), "valid": True},
+    "openai": {"secret": os.getenv("OPENAI_API_KEY"), "valid": True},
+    "anthropic": {"secret": os.getenv("ANTHROPIC_API_KEY"), "valid": True},
+    "google": {"secret": os.getenv("GOOGLE_API_KEY"), "valid": True},
 }
 
 print("Scenic Server is listening")
