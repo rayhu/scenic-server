@@ -2,7 +2,7 @@
 
 ## Overview
 
-The project is the backend server for the Scenic Road mobile app. It is built with FastAPI and is deployed on AWS.
+The project is the backend server for the Scenic Road mobile app. It is built with FastAPI and is deployed on a server specified in the github action secrets.
 
 
 ## Activate Virtual Environment

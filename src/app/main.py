@@ -4,7 +4,11 @@ import secrets
 from dotenv import load_dotenv
 import os
 from src.config.settings import settings
-from typing import Dict
+from typing import Dict, TypedDict
+
+class ServiceSecret(TypedDict):
+    secret: str
+    valid: bool
 
 # Load environment variables from .env file
 load_dotenv()
@@ -14,10 +18,11 @@ app = FastAPI(title=settings.APP_NAME, debug=settings.DEBUG)
 # Retrieve secrets from environment variables
 SECRET_KEY = os.getenv("SECRET_KEY")
 ADMIN_SECRET_KEY = os.getenv("ADMIN_SECRET_KEY")
-service_secrets_db: Dict[str, Dict[str, bool]] = {
-    "openai": {"secret": os.getenv("OPENAI_API_KEY"), "valid": True},
-    "anthropic": {"secret": os.getenv("ANTHROPIC_API_KEY"), "valid": True},
-    "google": {"secret": os.getenv("GOOGLE_API_KEY"), "valid": True},
+
+service_secrets_db: Dict[str, ServiceSecret] = {
+    "openai": {"secret": os.getenv("OPENAI_API_KEY", ""), "valid": True},
+    "anthropic": {"secret": os.getenv("ANTHROPIC_API_KEY", ""), "valid": True},
+    "google": {"secret": os.getenv("GOOGLE_API_KEY", ""), "valid": True},
 }
 
 print("Scenic Server is listening")
