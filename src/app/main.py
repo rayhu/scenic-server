@@ -6,9 +6,11 @@ import os
 from src.config.settings import settings
 from typing import Dict, TypedDict
 
+
 class ServiceSecret(TypedDict):
     secret: str
     valid: bool
+
 
 # Load environment variables from .env file
 load_dotenv()
